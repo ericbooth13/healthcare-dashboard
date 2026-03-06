@@ -11,11 +11,12 @@ The application allows users to:
 - Generate patient summaries
 - Create and edit patient records
 
-The project demonstrates a maintainable full-stack architecture with a containerized backend and modern React frontend.
+This project demonstrates a maintainable full-stack architecture with a Dockerized FastAPI backend, PostgreSQL database, and a modern React + TypeScript frontend.
+The application is fully containerized with Docker Compose, allowing the entire stack to run with a single command.
 
 ---
 
-## UI Preview
+# UI Preview
 
 ### Patient Dashboard
 
@@ -38,6 +39,7 @@ The project demonstrates a maintainable full-stack architecture with a container
 # Tech Stack
 
 ## Backend
+
 - FastAPI
 - PostgreSQL
 - SQLAlchemy ORM
@@ -45,6 +47,7 @@ The project demonstrates a maintainable full-stack architecture with a container
 - Docker / Docker Compose
 
 ## Frontend
+
 - React
 - TypeScript
 - Vite
@@ -54,12 +57,13 @@ The project demonstrates a maintainable full-stack architecture with a container
 
 # Architecture Notes
 
-- **Vite** was used for fast frontend setup and iteration speed.
-- **FastAPI** provides a lightweight but production-ready API framework with automatic OpenAPI documentation.
-- **PostgreSQL + Alembic** ensure the database schema can be recreated reliably across environments.
-- The patient list API supports **pagination, searching, and sorting** to scale beyond trivial datasets.
-- Clinical notes and patient summaries are implemented as **separate API resources** to keep the domain model modular.
-- A lightweight **request logging middleware** improves backend observability during development.
+- **FastAPI** provides rapid API development with built-in OpenAPI documentation.
+- **PostgreSQL + Alembic** allow the database schema to be recreated reliably.
+- **Vite** was chosen for fast frontend development and build speed.
+- The patient list API supports **pagination, search, and sorting** for scalability.
+- Clinical notes and summary generation are implemented as **separate API resources** to keep the backend modular.
+- A lightweight **request logging middleware** provides basic observability during development.
+- The frontend is built with Vite and served via **Nginx in a Docker container** for production-style deployment.
 
 ---
 
@@ -67,7 +71,7 @@ The project demonstrates a maintainable full-stack architecture with a container
 
 ## Backend API
 
-- RESTful patient API
+- RESTful patient CRUD API
 - Pagination, sorting, and search
 - Clinical notes endpoints
 - Generated patient summary endpoint
@@ -84,12 +88,13 @@ The project demonstrates a maintainable full-stack architecture with a container
 - Pagination controls
 - Patient detail view
 - Clinical notes display
-- Add/delete clinical notes
+- Add/delete note workflow
 - Generated patient summary view
 - Create patient form
 - Edit patient form
 - Routing with React Router
 - API integration with FastAPI
+- Dockerized frontend served via Nginx
 
 ---
 
@@ -108,6 +113,7 @@ healthcare-dashboard
 │   │
 │   ├── alembic
 │   ├── Dockerfile
+│   ├── alembic.ini
 │   └── requirements.txt
 │
 ├── frontend
@@ -120,10 +126,13 @@ healthcare-dashboard
 │   │       ├── PatientForm.tsx
 │   │       └── NotFound.tsx
 │   │
+│   ├── Dockerfile
+│   ├── nginx.conf
 │   └── package.json
 │
 ├── docker-compose.yml
 ├── README.md
+├── .env.example
 │
 ├── dashboard.jpg
 ├── patient_details.jpg
@@ -135,26 +144,29 @@ healthcare-dashboard
 
 # Running the Project
 
-## 1. Start Backend + Database
+## Run the Full Stack with Docker
 
 From the project root:
 
-```
+```bash
 docker compose up --build
 ```
 
 This starts:
 
-- FastAPI backend API
-- PostgreSQL database
+Frontend:
 
-API base URL:
+```
+http://localhost:3000
+```
+
+Backend API:
 
 ```
 http://localhost:8000
 ```
 
-Swagger documentation:
+API Documentation:
 
 ```
 http://localhost:8000/docs
@@ -162,23 +174,23 @@ http://localhost:8000/docs
 
 ---
 
-## 2. Start the Frontend
+# Frontend Development Mode (Optional)
 
-Open a new terminal:
+If you want to run the frontend in development mode with Vite:
 
-```
+```bash
 cd frontend
 npm install
 npm run dev
 ```
 
-Frontend typically runs at:
+Vite typically runs at:
 
 ```
 http://localhost:5173
 ```
 
-If that port is already in use, Vite may automatically select another local port such as:
+If that port is already in use, it may automatically select another port such as:
 
 ```
 http://localhost:5174
@@ -232,7 +244,7 @@ On application startup, the backend seeds the database with **20 realistic patie
 - visit history
 - patient statuses
 
-The seeding process is **idempotent**, meaning it will not duplicate records if the database already contains data.
+Seeding is **idempotent**, meaning it will not duplicate data if records already exist.
 
 ---
 
@@ -240,8 +252,8 @@ The seeding process is **idempotent**, meaning it will not duplicate records if 
 
 - The backend runs inside **Docker containers** to provide reproducible local development.
 - **Alembic migrations** allow the schema to be recreated from scratch.
-- The frontend communicates with the backend using the **patients, notes, and summary endpoints**.
-- **Request logging middleware** provides simple request timing and status logging for API calls.
+- The frontend communicates with the API using the **patients, notes, and summary endpoints**.
+- **Request logging middleware** provides request timing and status logging.
 
 ---
 
@@ -251,8 +263,7 @@ Potential enhancements:
 
 - Column sorting controls in the UI
 - Advanced search filters
-- Frontend containerization via Docker
-- Environment-based API URL configuration
 - Authentication and role-based access
-- Confirmation dialogs for destructive actions
-- Real-time updates for patient notes
+- Environment-based API configuration
+- Real-time updates for clinical notes
+- Confirmation dialogs before destructive actions
